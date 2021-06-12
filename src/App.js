@@ -1,53 +1,71 @@
 import './App.css'
 import Nav from './Components/Nav'
 import Button from './Components/Button'
-import Todo from './Components/Todo'
-import React, { useState, useRef } from 'react'
+import Todos from './Components/Todos'
+import React, { useState, useRef, useEffect } from 'react'
 
 
 function App() {
-
-  const [Input, setInput] = useState([])
   
-  const focusOn=useRef()
 
-  
-  const [fix, setFix] = useState([])
+    const refInput=useRef()
 
-
-  function display(event) {
+    const [Todolist, setTodolist] = useState([])
 
 
-    // focusOn.current.value = null
+    // const [keycount, setKeycount] = useState(0)/*make keycount globelly, so that after refresh, the count 
+    // remains same and don't start from 0*/
+
+
+    function buttononClick(event) {
+        
+        if ( refInput.current.value === '' ){ return null }
+
 
         if (event.keyCode === 13) {
-          // alert("Enter key pressed!!!!!")
-          return (
-            setFix(prev => prev = Input),
-            focusOn.current.focus()
-          )
+            setTodolist((prev) => {
+                const TodoLocalStorage = JSON.parse(localStorage.getItem('Todovalue'))
+                TodoLocalStorage.push(refInput.current.value)
+                localStorage.setItem('Todovalue', JSON.stringify(TodoLocalStorage))
+                prev = [...prev, refInput.current.value]
+                return (prev)
+            })
+
+            setTimeout(() => { refInput.current.value = null }, 1000)
+            refInput.current.focus()
         }
-   }
+    }
 
-  return (
-      <div className="App">
 
-        <Nav/>
+    useEffect(() => {
+        localStorage.setItem('Todovalue', '[]')
+    },[])
 
-        <input 
-        ref={focusOn}
-        type='text' 
-        onChange={e => setInput(e.target.value)} 
-        onKeyUp={display}
-        placeholder='todo'
-        />
 
-        <Button onClick={display}/>
 
-        <Todo element={fix}/>
 
-      </div>
-   )
+    return (
+        <div className="App">
+
+            <Nav/>
+
+            <input ref={refInput} type="text" onKeyUp={buttononClick} className="Input" placeholder='todo'/>
+
+            <Button proponClick={buttononClick}/>
+
+            <Todos Todolist={ Todolist } />
+
+        </div>
+    )
 }
+
+
+
+
+
+
+
+
+
 
 export default App;

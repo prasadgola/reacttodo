@@ -1,7 +1,7 @@
-function Button({ onClick }) {
+function Button({ proponClick }) {
 	return (
 		<>	        
-			<button onClick={onClick}>Enter </button>
+			<button onClick={ proponClick }>Enter </button>
 		</>
 	)
 }
